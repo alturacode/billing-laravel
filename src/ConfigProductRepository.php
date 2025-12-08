@@ -19,8 +19,8 @@ final readonly class ConfigProductRepository implements ProductRepository
 
     public function all(): array
     {
-        $plans = array_map(fn($plan) => Product::hydrate([...$plan, ['kind' => ProductKind::Plan->value]]), $this->config->get('billing.plans') ?? []);
-        $addons = array_map(fn($addon) => Product::hydrate([...$addon, ['kind' => ProductKind::AddOn->value]]), $this->config->get('billing.addons') ?? []);
+        $plans = array_map(fn($plan) => Product::hydrate([...$plan, 'kind' => ProductKind::Plan->value]), $this->config->get('billing.plans') ?? []);
+        $addons = array_map(fn($addon) => Product::hydrate([...$addon, 'kind' => ProductKind::AddOn->value]), $this->config->get('billing.addons') ?? []);
         $products = [...$plans, ...$addons];
 
         return array_map(fn(array $product) => Product::hydrate($product), $products);

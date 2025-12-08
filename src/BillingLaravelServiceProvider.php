@@ -40,12 +40,12 @@ final class BillingLaravelServiceProvider extends ServiceProvider
     private function registerRepositories(): void
     {
         $featureRepository = $this->app['config']->get('billing.repositories.features');
-        $this->app->singleton(FeatureRepository::class, $featureRepository);
+        $this->app->bind(FeatureRepository::class, $featureRepository);
 
-        $productRepository = $this->app['config']->get('billing.repositories.plans');
-        $this->app->singleton(ProductRepository::class, $productRepository);
+        $productRepository = $this->app['config']->get('billing.repositories.products');
+        $this->app->bind(ProductRepository::class, $productRepository);
 
         $subscriptionRepository = $this->app['config']->get('billing.repositories.subscriptions');
-        $this->app->singleton(SubscriptionRepository::class, $subscriptionRepository);
+        $this->app->bind(SubscriptionRepository::class, $subscriptionRepository);
     }
 }

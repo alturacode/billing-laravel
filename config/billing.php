@@ -32,7 +32,6 @@ return [
     'plans' => [
         [
             'id' => '01KBZ5QVFC48JBW3P9V61CKMF1',
-            'kind' => 'plan',
             'name' => 'Free',
             'slug' => 'free',
             'prices' => [],
