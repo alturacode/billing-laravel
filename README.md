@@ -55,16 +55,11 @@ class User extends Model
 }
 ```
 
-## Configuration
+3) Publish the config file and migrations
 
-Create a `config/billing.php` file in your app. You can start from this minimal example and adjust IDs to your
-environment:
-
-Notes
-
-- The IDs shown above are examples. Replace them with IDs from your billing system.
-- The default repositories read features/products from this config. For production, you can implement your own
-  repositories and set them here.
+```
+php artisan vendor:publish --provider="AlturaCode\Billing\Laravel\BillingServiceProvider"
+```
 
 ## Quick start
 

@@ -21,6 +21,9 @@
     "alturacode/billing-core": "^0.8.1",
     "illuminate/http": "12.x-dev"
   },
+  "suggest": {
+    "alturacode/billing-stripe": "Stripe Billing Adapter for Altura Code Billing Package."
+  },
   "extra": {
     "laravel": {
       "providers": [
