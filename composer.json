@@ -1,0 +1,30 @@
+{
+  "name": "alturacode/billing-laravel",
+  "description": "AlturaCode Billing for Laravel",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "AlturaCode\\Billing\\Laravel\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Gerardo Baez",
+      "email": "g@gerardobaez.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=8.4",
+    "illuminate/database": "^8.0",
+    "alturacode/billing-core": "^0.8.1"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "AlturaCode\\Billing\\Laravel\\BillingLaravelServiceProvider"
+      ]
+    }
+  }
+}
