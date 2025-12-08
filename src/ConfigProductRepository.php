@@ -38,7 +38,7 @@ final readonly class ConfigProductRepository implements ProductRepository
 
     public function findMultipleByPriceIds(array $priceIds): array
     {
-        return array_filter($this->all(), fn(Product $product) => $product->hasAnyPrice($priceIds));
+        return array_filter($this->all(), fn(Product $product) => $product->hasAnyPrice(...$priceIds));
     }
 
     public function save(Product $product): void
