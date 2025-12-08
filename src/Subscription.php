@@ -6,18 +6,63 @@ namespace AlturaCode\Billing\Laravel;
 
 use AlturaCode\Billing\Core\Subscriptions\SubscriptionStatus;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 final class Subscription extends Model
 {
+    use HasUlids;
+
+    protected $guarded = [];
+    
     protected $casts = [
         'status' => SubscriptionStatus::class,
         'cancel_at_period_end' => 'boolean',
         'trial_ends_at' => 'datetime',
         'canceled_at' => 'datetime',
     ];
+    
+    public static function fromCore(\AlturaCode\Billing\Core\Subscriptions\Subscription $subscription): self
+    {
+        return new self([
+            'provider' => $subscription->provider()->value(),
+            'name' => $subscription->name()->value(),
+            'status' => $subscription->status(),
+            'primary_item_id' => $subscription->primaryItem()->id()->value(),
+            'cancel_at_period_end' => $subscription->cancelAtPeriodEnd(),
+            'trial_ends_at' => $subscription->trialEndsAt(),
+            'canceled_at' => $subscription->canceledAt(),
+        ])->forceFill([
+            'id' => $subscription->id()->value(),
+        ]);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public static function saveFromCore(\AlturaCode\Billing\Core\Subscriptions\Subscription $subscription): Subscription
+    {
+        return DB::transaction(function () use ($subscription) {
+            $subscription = self::query()->updateOrCreate([
+                'id' => $subscription->id()->value(),
+            ], self::fromCore($subscription)->toArray());
+            
+            $items = [];
+            foreach ($subscription->items() as $item) {
+                $items[] = [
+                    ...SubscriptionItem::fromCore($item)->toArray(),
+                    'subscription_id' => $subscription->id()->value(),
+                ];
+            }
+            
+            SubscriptionItem::upsert($items, ['id']);
+            return $subscription;
+        });
+    }
 
     public function items(): HasMany
     {

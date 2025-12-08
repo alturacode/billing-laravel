@@ -3,6 +3,7 @@
 use AlturaCode\Billing\Core\Provider\SynchronousBillingProvider;
 use AlturaCode\Billing\Laravel\ConfigFeatureRepository;
 use AlturaCode\Billing\Laravel\ConfigProductRepository;
+use AlturaCode\Billing\Laravel\EloquentSubscriptionRepository;
 use AlturaCode\Billing\Laravel\Subscription;
 
 return [
@@ -66,6 +67,6 @@ return [
     'repositories' => [
         'features' => ConfigFeatureRepository::class,
         'products' => ConfigProductRepository::class,
-        'subscriptions' => null,
+        'subscriptions' => EloquentSubscriptionRepository::class,
     ],
 ];

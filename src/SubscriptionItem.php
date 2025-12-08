@@ -8,12 +8,28 @@ use Illuminate\Database\Eloquent\Model;
 
 final class SubscriptionItem extends Model
 {
+    protected $guarded = [];
+
     protected $casts = [
         'quantity' => 'integer',
         'price_amount' => 'integer',
         'current_period_starts_at' => 'datetime',
         'current_period_ends_at' => 'datetime',
     ];
+
+    public static function fromCore(\AlturaCode\Billing\Core\Subscriptions\SubscriptionItem $subscriptionItem): self
+    {
+        return new self([
+            'price_id' => $subscriptionItem->priceId()->value(),
+            'quantity' => $subscriptionItem->quantity(),
+            'price_amount' => $subscriptionItem->price()->amount(),
+            'price_currency' => $subscriptionItem->price()->currency()->value(),
+            'current_period_starts_at' => $subscriptionItem->currentPeriodStartsAt(),
+            'current_period_ends_at' => $subscriptionItem->currentPeriodEndsAt(),
+        ])->forceFill([
+            'id' => $subscriptionItem->id()->value(),
+        ]);
+    }
 
     public function toCore(): \AlturaCode\Billing\Core\Subscriptions\SubscriptionItem
     {
