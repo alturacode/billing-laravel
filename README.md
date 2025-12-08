@@ -77,8 +77,6 @@ if ($result->requiresAction()) {
 }
 
 $subscription = $result->subscription; // AlturaCode\Billing\Laravel\Subscription
-
-// Persist to your DB using your subscription repository implementation, if desired.
 ```
 
 Check a user’s subscription status:
