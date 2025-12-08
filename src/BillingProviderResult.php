@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AlturaCode\Billing\Laravel;
 
-use Exception;
+use AlturaCode\Billing\Laravel\Exceptions\NoRedirectRequiredException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 
@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Redirect;
 final readonly class BillingProviderResult
 {
     public function __construct(
-        public \AlturaCode\Billing\Core\Provider\BillingProviderResult $result
+        public \AlturaCode\Billing\Core\Provider\BillingProviderResult $result,
+        public Subscription                                            $subscription
     )
     {
     }
@@ -28,8 +29,8 @@ final readonly class BillingProviderResult
             return Redirect::to($this->result->clientAction->url);
         }
 
-        throw new Exception(
-            'Redirect action not supported by this billing provider.'
+        throw new NoRedirectRequiredException(
+            'This billing provider result does not require a redirect action.'
         );
     }
 }

@@ -20,10 +20,10 @@ $result = $user->newSubscription('default')
     ->create();
 
 if ($result->requiresAction()) {
-    return redirect()->to($result->clientAction->url); // e.g. off-site checkout or SCA
+    return $result->redirect(); // e.g., off-site checkout or SCA
 }
 
-$subscription = $result->subscription; // Core subscription object
+$subscription = $result->subscription; // AlturaCode\Billing\Laravel\Subscription
 ```
 
 The default provider is a synchronous in-memory provider (great for demos and tests). Swap it for a real provider by
@@ -81,7 +81,7 @@ if ($result->requiresAction()) {
     return $result->redirect();
 }
 
-$subscription = $result->subscription; // Core subscription domain object
+$subscription = $result->subscription; // AlturaCode\Billing\Laravel\Subscription
 
 // Persist to your DB using your subscription repository implementation, if desired.
 ```

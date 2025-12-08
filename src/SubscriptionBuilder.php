@@ -24,6 +24,7 @@ final readonly class SubscriptionBuilder
 
     public function create(array $providerOptions = []): BillingProviderResult
     {
-        return new BillingProviderResult($this->manager->createSubscription($this->draftBuilder->build(), $providerOptions));
+        $result = $this->manager->createSubscription($this->draftBuilder->build(), $providerOptions);
+        return new BillingProviderResult($result, Subscription::find($result->subscription->id()->value()));
     }
 }
