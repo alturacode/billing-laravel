@@ -17,8 +17,15 @@ final class BillingLaravelServiceProvider extends ServiceProvider
         $this->registerRepositories();
     }
 
-    public function boot()
+    public function boot(): void
     {
+        $this->publishes([
+            __DIR__ . '/../config/billing.php' => $this->app->configPath('billing.php'),
+        ], 'alturacode-billing-config');
+
+        $this->publishesMigrations([
+            __DIR__ . '/../database/migrations' => $this->app->databasePath('migrations'),
+        ], 'alturacode-billing-migrations');
     }
 
     private function registerBillingProviderRegistry(): void

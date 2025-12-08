@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AlturaCode\Billing\Laravel;
 
 use AlturaCode\Billing\Core\BillingManager;
-use AlturaCode\Billing\Core\Provider\BillingProviderResult;
 use AlturaCode\Billing\Core\SubscriptionDraftBuilder;
 
 /** @mixin SubscriptionDraftBuilder */
@@ -25,6 +24,6 @@ final readonly class SubscriptionBuilder
 
     public function create(array $providerOptions = []): BillingProviderResult
     {
-        return $this->manager->createSubscription($this->draftBuilder->build(), $providerOptions);
+        return new BillingProviderResult($this->manager->createSubscription($this->draftBuilder->build(), $providerOptions));
     }
 }
