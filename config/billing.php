@@ -6,7 +6,7 @@ use AlturaCode\Billing\Laravel\ConfigProductRepository;
 use AlturaCode\Billing\Laravel\Subscription;
 
 return [
-    'provider' => 'none',
+    'provider' => 'sync',
 
     'providers' => [
         'sync' => SynchronousBillingProvider::class,
