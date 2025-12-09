@@ -29,6 +29,7 @@ final class Subscription extends Model
     public static function fromCore(\AlturaCode\Billing\Core\Subscriptions\Subscription $subscription): self
     {
         return new self([
+            'id' => $subscription->id()->value(),
             'provider' => $subscription->provider()->value(),
             'billable_id' => $subscription->billable()->id(),
             'billable_type' => $subscription->billable()->type(),
@@ -38,8 +39,6 @@ final class Subscription extends Model
             'cancel_at_period_end' => $subscription->cancelAtPeriodEnd(),
             'trial_ends_at' => $subscription->trialEndsAt(),
             'canceled_at' => $subscription->canceledAt(),
-        ])->forceFill([
-            'id' => $subscription->id()->value(),
         ]);
     }
 

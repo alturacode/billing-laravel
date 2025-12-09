@@ -25,6 +25,7 @@ final class SubscriptionItem extends Model
     public static function fromCore(\AlturaCode\Billing\Core\Subscriptions\SubscriptionItem $subscriptionItem): self
     {
         return new self([
+            'id' => $subscriptionItem->id()->value(),
             'price_id' => $subscriptionItem->priceId()->value(),
             'quantity' => $subscriptionItem->quantity(),
             'price_amount' => $subscriptionItem->price()->amount(),
@@ -33,8 +34,6 @@ final class SubscriptionItem extends Model
             'interval_count' => $subscriptionItem->interval()->count(),
             'current_period_starts_at' => $subscriptionItem->currentPeriodStartsAt(),
             'current_period_ends_at' => $subscriptionItem->currentPeriodEndsAt(),
-        ])->forceFill([
-            'id' => $subscriptionItem->id()->value(),
         ]);
     }
 
