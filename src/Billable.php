@@ -28,10 +28,7 @@ trait Billable
         return $subscription && $subscription->isActive();
     }
 
-    /**
-     * @throws BindingResolutionException
-     */
-    public function newSubscription(string $name)
+    public function newSubscription(string $name = 'default')
     {
         /** @var $this Model */
         return App::make(SubscriptionBuilder::class)

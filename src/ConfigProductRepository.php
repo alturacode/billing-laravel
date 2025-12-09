@@ -19,10 +19,9 @@ final readonly class ConfigProductRepository implements ProductRepository
 
     public function all(): array
     {
-        $plans = array_map(fn($plan) => Product::hydrate([...$plan, 'kind' => ProductKind::Plan->value]), $this->config->get('billing.plans') ?? []);
-        $addons = array_map(fn($addon) => Product::hydrate([...$addon, 'kind' => ProductKind::AddOn->value]), $this->config->get('billing.addons') ?? []);
-        $products = [...$plans, ...$addons];
-
+        $plans = $this->plansFromConfig();
+        $addons = $this->addOnsFromConfig();
+        $products = $this->denormalize([...$plans, ...$addons]);
         return array_map(fn(array $product) => Product::hydrate($product), $products);
     }
 
@@ -43,5 +42,34 @@ final readonly class ConfigProductRepository implements ProductRepository
 
     public function save(Product $product): void
     {
+    }
+
+    /**
+     * @return Product[]|array
+     */
+    public function plansFromConfig(): array
+    {
+        return array_map(fn($plan) => [...$plan, 'kind' => ProductKind::Plan->value], $this->config->get('billing.plans') ?? []);
+    }
+
+    /**
+     * @return Product[]|array
+     */
+    public function addOnsFromConfig(): array
+    {
+        return array_map(fn($addon) => [...$addon, 'kind' => ProductKind::AddOn->value], $this->config->get('billing.addons') ?? []);
+    }
+
+    private function denormalize(array $products): array
+    {
+        // Products coming from the config file don't include the feature's kind, we need to add it.
+        $map = array_column($this->config->get('billing.features') ?? [], 'kind', 'key');
+        return array_map(fn(array $product) => [
+            ...$product,
+            'features' => array_map(fn(array $feature) => [
+                ...$feature,
+                'kind' => $map[$feature['key']]
+            ], $product['features'])
+        ], $products);
     }
 }

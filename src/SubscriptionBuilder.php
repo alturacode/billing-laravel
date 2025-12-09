@@ -17,9 +17,10 @@ final readonly class SubscriptionBuilder
     {
     }
 
-    public function __call(string $name, array $arguments): SubscriptionDraftBuilder
+    public function __call(string $name, array $arguments): SubscriptionBuilder
     {
-        return $this->draftBuilder->{$name}(...$arguments);
+        $this->draftBuilder->{$name}(...$arguments);
+        return $this;
     }
 
     public function create(array $providerOptions = []): BillingProviderResult
