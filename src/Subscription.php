@@ -30,6 +30,8 @@ final class Subscription extends Model
     {
         return new self([
             'provider' => $subscription->provider()->value(),
+            'billable_id' => $subscription->billable()->id(),
+            'billable_type' => $subscription->billable()->type(),
             'name' => $subscription->name()->value(),
             'status' => $subscription->status(),
             'primary_item_id' => $subscription->primaryItem()->id()->value(),
@@ -44,18 +46,18 @@ final class Subscription extends Model
     /**
      * @throws Throwable
      */
-    public static function saveFromCore(\AlturaCode\Billing\Core\Subscriptions\Subscription $subscription): Subscription
+    public static function saveFromCore(\AlturaCode\Billing\Core\Subscriptions\Subscription $coreSubscription): Subscription
     {
-        return DB::transaction(function () use ($subscription) {
+        return DB::transaction(function () use ($coreSubscription) {
             $subscription = self::query()->updateOrCreate([
-                'id' => $subscription->id()->value(),
-            ], self::fromCore($subscription)->toArray());
+                'id' => $coreSubscription->id()->value(),
+            ], self::fromCore($coreSubscription)->toArray());
             
             $items = [];
-            foreach ($subscription->items() as $item) {
+            foreach ($coreSubscription->items() as $item) {
                 $items[] = [
                     ...SubscriptionItem::fromCore($item)->toArray(),
-                    'subscription_id' => $subscription->id()->value(),
+                    'subscription_id' => $coreSubscription->id()->value(),
                 ];
             }
             

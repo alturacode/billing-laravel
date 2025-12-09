@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace AlturaCode\Billing\Laravel;
 
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 
 final class SubscriptionItem extends Model
 {
+    use HasUlids;
+
     protected $guarded = [];
 
     protected $casts = [
         'quantity' => 'integer',
         'price_amount' => 'integer',
+        'interval_type' => 'string',
+        'interval_count' => 'integer',
         'current_period_starts_at' => 'datetime',
         'current_period_ends_at' => 'datetime',
     ];
@@ -23,7 +28,9 @@ final class SubscriptionItem extends Model
             'price_id' => $subscriptionItem->priceId()->value(),
             'quantity' => $subscriptionItem->quantity(),
             'price_amount' => $subscriptionItem->price()->amount(),
-            'price_currency' => $subscriptionItem->price()->currency()->value(),
+            'price_currency' => $subscriptionItem->price()->currency()->code(),
+            'interval_type' => $subscriptionItem->interval()->type(),
+            'interval_count' => $subscriptionItem->interval()->count(),
             'current_period_starts_at' => $subscriptionItem->currentPeriodStartsAt(),
             'current_period_ends_at' => $subscriptionItem->currentPeriodEndsAt(),
         ])->forceFill([
@@ -38,6 +45,7 @@ final class SubscriptionItem extends Model
             'priceId' => $this->price_id,
             'quantity' => $this->quantity,
             'price' => ['amount' => $this->price_amount, 'currency' => $this->price_currency],
+            'interval' => ['type' => $this->interval_type, 'count' => $this->interval_count],
             'currentPeriodStartsAt' => $this->current_period_starts_at ? $this->current_period_starts_at->format('Y-m-d H:i:s') : null,
             'currentPeriodEndsAt' => $this->current_period_ends_at ? $this->current_period_ends_at->format('Y-m-d H:i:s') : null,
         ]);

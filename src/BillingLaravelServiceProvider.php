@@ -15,6 +15,8 @@ final class BillingLaravelServiceProvider extends ServiceProvider
     {
         $this->registerBillingProviderRegistry();
         $this->registerRepositories();
+
+        $this->mergeConfigFrom(__DIR__ . '/../config/billing.php', 'billing');
     }
 
     public function boot(): void
@@ -26,6 +28,8 @@ final class BillingLaravelServiceProvider extends ServiceProvider
         $this->publishesMigrations([
             __DIR__ . '/../database/migrations' => $this->app->databasePath('migrations'),
         ], 'alturacode-billing-migrations');
+
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
     private function registerBillingProviderRegistry(): void
@@ -39,13 +43,13 @@ final class BillingLaravelServiceProvider extends ServiceProvider
 
     private function registerRepositories(): void
     {
-        $featureRepository = $this->app['config']->get('billing.repositories.features');
+        $featureRepository = $this->app['config']->get('billing.repositories.features', ConfigFeatureRepository::class);
         $this->app->bind(FeatureRepository::class, $featureRepository);
 
-        $productRepository = $this->app['config']->get('billing.repositories.products');
+        $productRepository = $this->app['config']->get('billing.repositories.products', ConfigProductRepository::class);
         $this->app->bind(ProductRepository::class, $productRepository);
 
-        $subscriptionRepository = $this->app['config']->get('billing.repositories.subscriptions');
+        $subscriptionRepository = $this->app['config']->get('billing.repositories.subscriptions', EloquentSubscriptionRepository::class);
         $this->app->bind(SubscriptionRepository::class, $subscriptionRepository);
     }
 }

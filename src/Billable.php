@@ -2,7 +2,6 @@
 
 namespace AlturaCode\Billing\Laravel;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
@@ -11,7 +10,6 @@ trait Billable
 {
     public function subscription(string $name = 'default'): ?Subscription
     {
-        /** @noinspection PhpUndefinedFieldInspection */
         return $this->subscriptions->first(fn($subscription) => $subscription->name === $name);
     }
 
@@ -28,7 +26,7 @@ trait Billable
         return $subscription && $subscription->isActive();
     }
 
-    public function newSubscription(string $name = 'default')
+    public function newSubscription(string $name = 'default'): SubscriptionBuilder
     {
         /** @var $this Model */
         return App::make(SubscriptionBuilder::class)

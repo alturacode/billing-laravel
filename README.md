@@ -106,7 +106,7 @@ $active = Subscription::query()
     - `subscription(string $name = 'default'): ?Subscription`
     - `subscriptions()` Eloquent relation (morphMany)
     - `subscribed(string $name = 'default'): bool`
-    - `newSubscription(string $name): SubscriptionBuilder`
+    - `newSubscription(string $name = 'default'): SubscriptionBuilder`
 
 - Builder: `AlturaCode\Billing\Laravel\SubscriptionBuilder` (delegates to Core `SubscriptionDraftBuilder`)
     - `withName(string $name)`
@@ -131,7 +131,8 @@ $active = Subscription::query()
     - Core `AlturaCode\Billing\Core\Provider\BillingProviderResult`
         - Properties: `subscription`, `clientAction`
         - Methods: `requiresAction()`
-    - Laravel convenience wrapper `AlturaCode\Billing\Laravel\BillingProviderResult` adds `redirect()` (when used).
+    - Laravel convenience wrapper `AlturaCode\Billing\Laravel\BillingProviderResult` adds `redirect()` (when used) and
+      `subscription` property for retrieving the Eloquent subscription model.
 
 - Service provider bindings:
     - `BillingProviderRegistry` is built from `config('billing.providers')`.
