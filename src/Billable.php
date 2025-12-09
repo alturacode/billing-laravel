@@ -2,7 +2,6 @@
 
 namespace AlturaCode\Billing\Laravel;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 
@@ -15,7 +14,6 @@ trait Billable
 
     public function subscriptions()
     {
-        /** @var Model $this */
         return $this->morphMany(Config::get('billing.models.subscription'), 'billable')
             ->orderBy('created_at', 'desc');
     }
@@ -28,7 +26,6 @@ trait Billable
 
     public function newSubscription(string $name = 'default'): SubscriptionBuilder
     {
-        /** @var $this Model */
         return App::make(SubscriptionBuilder::class)
             ->withName($name)
             ->withProvider(Config::get('billing.provider'))
