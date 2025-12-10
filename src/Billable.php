@@ -2,6 +2,9 @@
 
 namespace AlturaCode\Billing\Laravel;
 
+use Carbon\Carbon;
+use AlturaCode\Billing\Core\EntitlementChecker;
+use AlturaCode\Billing\Core\EntitlementCheckerFactory;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 
@@ -22,6 +25,13 @@ trait Billable
     {
         $subscription = $this->subscription($name);
         return $subscription && $subscription->isActive();
+    }
+
+    public function features(string $name = 'default', ?Carbon $date = null): EntitlementChecker
+    {
+        return App::make(EntitlementCheckerFactory::class)->create(
+            $this->subscription($name)->toCore(), ($date ?? now())->toDateTimeImmutable()
+        );
     }
 
     public function newSubscription(string $name = 'default'): SubscriptionBuilder

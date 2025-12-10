@@ -36,6 +36,20 @@ it('can create a free subscription', function () {
         'interval_type' => 'month',
         'interval_count' => 1,
     ]);
+
+    $this->assertDatabaseCount('subscription_item_entitlements', 3);
+    $this->assertDatabaseHas('subscription_item_entitlements', [
+        'feature_key' => 'storage_space',
+        'feature_value_integer' => 5,
+    ]);
+    $this->assertDatabaseHas('subscription_item_entitlements', [
+        'feature_key' => 'users',
+        'feature_value_integer' => 2,
+    ]);
+    $this->assertDatabaseHas('subscription_item_entitlements', [
+        'feature_key' => 'projects',
+        'feature_value_integer' => 3,
+    ]);
 });
 
 it('can create a paid subscription with addons', function () {

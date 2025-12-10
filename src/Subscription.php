@@ -47,20 +47,33 @@ final class Subscription extends Model
      */
     public static function saveFromCore(\AlturaCode\Billing\Core\Subscriptions\Subscription $coreSubscription): Subscription
     {
+        // @todo - handle removing items & entitlements
         return DB::transaction(function () use ($coreSubscription) {
             $subscription = self::query()->updateOrCreate([
                 'id' => $coreSubscription->id()->value(),
             ], self::fromCore($coreSubscription)->toArray());
             
             $items = [];
+            $entitlements = [];
             foreach ($coreSubscription->items() as $item) {
                 $items[] = [
                     ...SubscriptionItem::fromCore($item)->toArray(),
                     'subscription_id' => $coreSubscription->id()->value(),
                 ];
+                foreach ($item->entitlements() as $entitlement) {
+                    $entitlements[] = [
+                        ...SubscriptionItemEntitlement::fromCore($entitlement)->toArray(),
+                        'subscription_item_id' => $item->id()->value(),
+                    ];
+                }
             }
-            
-            SubscriptionItem::upsert($items, ['id']);
+
+            if (count($items) > 0) {
+                SubscriptionItem::upsert($items, ['id']);
+            }
+            if (count($entitlements) > 0) {
+                SubscriptionItemEntitlement::upsert($entitlements, ['id']);
+            }
             return $subscription;
         });
     }
@@ -133,12 +146,12 @@ final class Subscription extends Model
             'provider' => $this->provider,
             'name' => $this->name,
             'status' => $this->status->value,
-            'items' => $this->items->map(fn(SubscriptionItem $item) => $item->toCore())->toArray(),
-            'primaryItemId' => $this->primary_item_id,
-            'createdAt' => $this->created_at->format('Y-m-d H:i:s'),
-            'cancelAtPeriodEnd' => $this->cancel_at_period_end,
-            'trialEndsAt' => $this->trial_ends_at ? $this->trial_ends_at->format('Y-m-d H:i:s') : null,
-            'canceledAt' => $this->canceled_at ? $this->canceled_at->format('Y-m-d H:i:s') : null,
+            'items' => $this->items->map(fn(SubscriptionItem $item) => $item->toCoreArray())->toArray(),
+            'primary_item_id' => $this->primary_item_id,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'cancel_at_period_end' => $this->cancel_at_period_end,
+            'trial_ends_at' => $this->trial_ends_at ? $this->trial_ends_at->format('Y-m-d H:i:s') : null,
+            'canceled_at' => $this->canceled_at ? $this->canceled_at->format('Y-m-d H:i:s') : null,
         ]);
     }
 }

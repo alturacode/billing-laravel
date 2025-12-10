@@ -6,6 +6,7 @@ namespace AlturaCode\Billing\Laravel;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class SubscriptionItem extends Model
 {
@@ -21,6 +22,11 @@ final class SubscriptionItem extends Model
         'current_period_starts_at' => 'datetime',
         'current_period_ends_at' => 'datetime',
     ];
+
+    public function entitlements(): HasMany
+    {
+        return $this->hasMany(SubscriptionItemEntitlement::class, 'subscription_item_id');
+    }
 
     public static function fromCore(\AlturaCode\Billing\Core\Subscriptions\SubscriptionItem $subscriptionItem): self
     {
@@ -39,14 +45,20 @@ final class SubscriptionItem extends Model
 
     public function toCore(): \AlturaCode\Billing\Core\Subscriptions\SubscriptionItem
     {
-        return \AlturaCode\Billing\Core\Subscriptions\SubscriptionItem::hydrate([
+        return \AlturaCode\Billing\Core\Subscriptions\SubscriptionItem::hydrate($this->toCoreArray());
+    }
+
+    public function toCoreArray(): array
+    {
+        return [
             'id' => $this->id,
-            'priceId' => $this->price_id,
+            'price_id' => $this->price_id,
             'quantity' => $this->quantity,
             'price' => ['amount' => $this->price_amount, 'currency' => $this->price_currency],
             'interval' => ['type' => $this->interval_type, 'count' => $this->interval_count],
-            'currentPeriodStartsAt' => $this->current_period_starts_at ? $this->current_period_starts_at->format('Y-m-d H:i:s') : null,
-            'currentPeriodEndsAt' => $this->current_period_ends_at ? $this->current_period_ends_at->format('Y-m-d H:i:s') : null,
-        ]);
+            'entitlements' => $this->entitlements->map(fn(SubscriptionItemEntitlement $entitlement) => $entitlement->toCoreArray())->toArray(),
+            'current_period_starts_at' => $this->current_period_starts_at ? $this->current_period_starts_at->format('Y-m-d H:i:s') : null,
+            'current_period_ends_at' => $this->current_period_ends_at ? $this->current_period_ends_at->format('Y-m-d H:i:s') : null,
+        ];
     }
 }
