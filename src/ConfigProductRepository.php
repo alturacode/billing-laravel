@@ -67,8 +67,11 @@ final readonly class ConfigProductRepository implements ProductRepository
         return array_map(fn(array $product) => [
             ...$product,
             'features' => array_map(fn(array $feature) => [
-                ...$feature,
-                'kind' => $map[$feature['key']]
+                'key' => $feature['key'],
+                'value' => [
+                    'value' => $feature['value'],
+                    'kind' => $map[$feature['key']],
+                ]
             ], $product['features'])
         ], $products);
     }

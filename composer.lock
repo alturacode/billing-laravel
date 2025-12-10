@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86a9480d6de1d3744dbd7f1da3710814",
+    "content-hash": "eb0e3c531f5476596b8708335e3808b0",
     "packages": [
         {
             "name": "alturacode/billing-core",
-            "version": "v0.11.0",
+            "version": "v0.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alturacode/billing-core.git",
-                "reference": "57317c7712844b24975c4949dfcfe33ad56c3c2f"
+                "reference": "1670af652415d0a797de374c94ebb26e4ba8148c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alturacode/billing-core/zipball/57317c7712844b24975c4949dfcfe33ad56c3c2f",
-                "reference": "57317c7712844b24975c4949dfcfe33ad56c3c2f",
+                "url": "https://api.github.com/repos/alturacode/billing-core/zipball/1670af652415d0a797de374c94ebb26e4ba8148c",
+                "reference": "1670af652415d0a797de374c94ebb26e4ba8148c",
                 "shasum": ""
             },
             "require": {
@@ -58,9 +58,9 @@
             ],
             "support": {
                 "issues": "https://github.com/alturacode/billing-core/issues",
-                "source": "https://github.com/alturacode/billing-core/tree/v0.11.0"
+                "source": "https://github.com/alturacode/billing-core/tree/v0.12.1"
             },
-            "time": "2025-12-09T06:21:12+00:00"
+            "time": "2025-12-10T17:35:00+00:00"
         },
         {
             "name": "brick/math",
@@ -1122,12 +1122,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "2f7611ea8f5cb451f7fa224d6275702712829ce3"
+                "reference": "0a24afdcf3fc8e9414972dea6ac653d6bd8f39b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/2f7611ea8f5cb451f7fa224d6275702712829ce3",
-                "reference": "2f7611ea8f5cb451f7fa224d6275702712829ce3",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/0a24afdcf3fc8e9414972dea6ac653d6bd8f39b4",
+                "reference": "0a24afdcf3fc8e9414972dea6ac653d6bd8f39b4",
                 "shasum": ""
             },
             "require": {
@@ -1337,7 +1337,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-12-08T22:34:25+00:00"
+            "time": "2025-12-10T15:31:07+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -6081,12 +6081,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/deprecations.git",
-                "reference": "8dfcd6625820194ff0e4de93663fb3199d28b60a"
+                "reference": "32bc26eaf78beec212328f18620b487d971b5ebf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/8dfcd6625820194ff0e4de93663fb3199d28b60a",
-                "reference": "8dfcd6625820194ff0e4de93663fb3199d28b60a",
+                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/32bc26eaf78beec212328f18620b487d971b5ebf",
+                "reference": "32bc26eaf78beec212328f18620b487d971b5ebf",
                 "shasum": ""
             },
             "require": {
@@ -6122,7 +6122,7 @@
                 "issues": "https://github.com/doctrine/deprecations/issues",
                 "source": "https://github.com/doctrine/deprecations/tree/1.1.x"
             },
-            "time": "2025-11-03T13:53:48+00:00"
+            "time": "2025-12-10T15:12:33+00:00"
         },
         {
             "name": "fakerphp/faker",
@@ -6376,12 +6376,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Jean85/pretty-package-versions.git",
-                "reference": "6c16cf43394416706532e51c781c0584a6780258"
+                "reference": "d47de165556b09d2fe773e95c32fad5c3f95fe2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Jean85/pretty-package-versions/zipball/6c16cf43394416706532e51c781c0584a6780258",
-                "reference": "6c16cf43394416706532e51c781c0584a6780258",
+                "url": "https://api.github.com/repos/Jean85/pretty-package-versions/zipball/d47de165556b09d2fe773e95c32fad5c3f95fe2f",
+                "reference": "d47de165556b09d2fe773e95c32fad5c3f95fe2f",
                 "shasum": ""
             },
             "require": {
@@ -6429,7 +6429,7 @@
                 "issues": "https://github.com/Jean85/pretty-package-versions/issues",
                 "source": "https://github.com/Jean85/pretty-package-versions/tree/2.x"
             },
-            "time": "2025-11-27T00:39:55+00:00"
+            "time": "2025-12-10T08:19:13+00:00"
         },
         {
             "name": "laravel/pail",

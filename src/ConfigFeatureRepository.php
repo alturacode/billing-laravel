@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace AlturaCode\Billing\Laravel;
 
+use AlturaCode\Billing\Core\Common\FeatureKey;
 use AlturaCode\Billing\Core\Features\Feature;
-use AlturaCode\Billing\Core\Features\FeatureKey;
 use AlturaCode\Billing\Core\Features\FeatureRepository;
 use Illuminate\Contracts\Config\Repository;
 

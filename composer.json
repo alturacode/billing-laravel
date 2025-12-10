@@ -26,7 +26,7 @@
     "require": {
         "php": ">=8.4",
         "illuminate/database": "^12.0",
-        "alturacode/billing-core": "^0.11.0",
+        "alturacode/billing-core": "^0.12.0",
         "illuminate/http": "^12.0"
     },
     "suggest": {
