@@ -9,6 +9,7 @@ use AlturaCode\Billing\Core\Products\ProductId;
 use AlturaCode\Billing\Core\Products\ProductKind;
 use AlturaCode\Billing\Core\Products\ProductPriceId;
 use AlturaCode\Billing\Core\Products\ProductRepository;
+use AlturaCode\Billing\Core\Products\ProductSlug;
 use Illuminate\Contracts\Config\Repository;
 
 final readonly class ConfigProductRepository implements ProductRepository
@@ -33,6 +34,11 @@ final readonly class ConfigProductRepository implements ProductRepository
     public function findByPriceId(ProductPriceId $priceId): ?Product
     {
         return array_find($this->all(), fn(Product $product) => $product->hasPrice($priceId));
+    }
+
+    public function findBySlug(ProductSlug $slug): Product
+    {
+        return array_find($this->all(), fn(Product $product) => $product->slug()->equals($slug));
     }
 
     public function findMultipleByPriceIds(array $priceIds): array

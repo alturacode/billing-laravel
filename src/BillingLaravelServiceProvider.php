@@ -6,6 +6,7 @@ namespace AlturaCode\Billing\Laravel;
 
 use AlturaCode\Billing\Core\Features\FeatureRepository;
 use AlturaCode\Billing\Core\Products\ProductRepository;
+use AlturaCode\Billing\Core\Provider\ExternalIdMapper;
 use AlturaCode\Billing\Core\Subscriptions\SubscriptionRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -15,6 +16,8 @@ final class BillingLaravelServiceProvider extends ServiceProvider
     {
         $this->registerBillingProviderRegistry();
         $this->registerRepositories();
+
+        $this->app->bind(ExternalIdMapper::class, DatabaseExternalIdMapperStorage::class);
 
         $this->mergeConfigFrom(__DIR__ . '/../config/billing.php', 'billing');
     }
