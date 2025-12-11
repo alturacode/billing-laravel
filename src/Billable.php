@@ -21,10 +21,22 @@ trait Billable
             ->orderBy('created_at', 'desc');
     }
 
-    public function subscribed(string $name = 'default'): bool
+    public function subscribed(string $name = 'default', ?string $plan = null): bool
     {
+        // @todo we should introduce a checker in core
+
         $subscription = $this->subscription($name);
-        return $subscription && $subscription->isActive();
+
+        if ($subscription === null) {
+            return false;
+        }
+
+        if ($plan !== null) {
+            // @todo we should check by slug as well
+            return $subscription->primary_item_id === $plan;
+        }
+
+        return $subscription->isActive();
     }
 
     public function features(string $name = 'default', ?Carbon $date = null): EntitlementChecker
