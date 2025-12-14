@@ -6,16 +6,16 @@ and billing providers in Laravel apps.
 ## TL;DR
 
 ```php
-// Add the Billable trait to your billable model (e.g., User).
+use AlturaCode\Billing\Laravel\HasBilling;
 use AlturaCode\Billing\Laravel\Billable;
 
-class User extends Model {
-    use Billable;
+class User extends Model implements Billable {
+    use HasBilling;
 }
 
 // Create a subscription
 $result = $user->newSubscription('default')
-    ->withPlanPriceId('price_basic_monthly')
+    ->withPlan('plan_id', 'month', 1, 'usd') // or withPlanPriceId('product_price_id')
     ->withTrialDays(14)
     ->create();
 
@@ -25,9 +25,6 @@ if ($result->requiresAction()) {
 
 $subscription = $result->subscription; // AlturaCode\Billing\Laravel\Subscription
 ```
-
-The default provider is a synchronous in-memory provider (great for demos and tests). Swap it for a real provider by
-implementing `BillingProvider` from the core package and wiring it in the config.
 
 ## Requirements
 
@@ -44,14 +41,15 @@ composer require alturacode/billing-laravel
 
 The service provider is auto-discovered.
 
-2) Add the `Billable` trait to your billable model (usually `App\Models\User`)
+2) Make your billable model implement `AlturaCode\Billing\Laravel\Billable` and use the `AlturaCode\Billing\Laravel\HasBilling` trait:
 
 ```php
+use AlturaCode\Billing\Laravel\HasBilling;
 use AlturaCode\Billing\Laravel\Billable;
 
-class User extends Model
+class User extends Model implements Billable
 {
-    use Billable;
+    use HasBilling;
 }
 ```
 

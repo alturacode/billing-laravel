@@ -3,14 +3,15 @@
 namespace Workbench\App\Models;
 
 use AlturaCode\Billing\Laravel\Billable;
+use AlturaCode\Billing\Laravel\HasBilling;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements Billable
 {
     /** @use HasFactory<\Workbench\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, Billable;
+    use HasFactory, Notifiable, HasBilling;
 
     /**
      * The attributes that are mass assignable.
