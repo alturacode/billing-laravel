@@ -98,45 +98,7 @@ $active = Subscription::query()
     ->get();
 ```
 
-## High-level API surface
-
-- Trait: `AlturaCode\Billing\Laravel\Billable`
-    - `subscription(string $name = 'default'): ?Subscription`
-    - `subscriptions()` Eloquent relation (morphMany)
-    - `subscribed(string $name = 'default'): bool`
-    - `newSubscription(string $name = 'default'): SubscriptionBuilder`
-
-- Builder: `AlturaCode\Billing\Laravel\SubscriptionBuilder` (delegates to Core `SubscriptionDraftBuilder`)
-    - `withName(string $name)`
-    - `withBillable(string $billableType, string $billableId)`
-    - `withProvider(string $provider)`
-    - `withPlanPriceId(string $priceId, int $quantity = 1)`
-    - `withTrialEndsAt(DateTimeImmutable|null $trialEndsAt)`
-    - `withTrialDays(int $days)`
-    - `withAddon(string $priceId, int $quantity = 1)`
-    - `create(array $providerOptions = []): AlturaCode\Billing\Laravel\BillingProviderResult`
-
-- Models:
-    - `AlturaCode\Billing\Laravel\Subscription` (Eloquent)
-        - Relations: `items()`, `billable()`
-        - Helpers: `isActive()`, `isPaused()`, `isCanceled()`, `isIncomplete()`
-        - Scopes: `provider()`, `name()`, `active()`, `paused()`, `canceled()`, `incomplete()`
-        - Conversion: `toCore()` -> Core `AlturaCode\Billing\Core\Subscriptions\Subscription`
-    - `AlturaCode\Billing\Laravel\SubscriptionItem` (Eloquent)
-        - Conversion: `toCore()` -> Core `AlturaCode\Billing\Core\Subscriptions\SubscriptionItem`
-
-- Result:
-    - Core `AlturaCode\Billing\Core\Provider\BillingProviderResult`
-        - Properties: `subscription`, `clientAction`
-        - Methods: `requiresAction()`
-    - Laravel convenience wrapper `AlturaCode\Billing\Laravel\BillingProviderResult` adds `redirect()` (when used) and
-      `subscription` property for retrieving the Eloquent subscription model.
-
-- Service provider bindings:
-    - `BillingProviderRegistry` is built from `config('billing.providers')`.
-    - Repositories are bound from `config('billing.repositories.*')`.
-
-## Providers
+## Billing Providers
 
 The package ships with `SynchronousBillingProvider` (no external calls). To integrate with a real provider:
 
