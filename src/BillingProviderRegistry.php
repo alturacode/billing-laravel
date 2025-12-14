@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AlturaCode\Billing\Laravel;
 
 use AlturaCode\Billing\Core\Provider\BillingProvider;
+use AlturaCode\Billing\Core\Provider\ProductAwareBillingProvider;
 use InvalidArgumentException;
 
 final readonly class BillingProviderRegistry implements \AlturaCode\Billing\Core\Provider\BillingProviderRegistry
@@ -18,5 +19,15 @@ final readonly class BillingProviderRegistry implements \AlturaCode\Billing\Core
         return $this->providers[$provider] ?? throw new InvalidArgumentException(
             "Billing provider [$provider] is not registered."
         );
+    }
+
+    public function all(): array
+    {
+        return $this->providers;
+    }
+
+    public function productAwareProviders(): array
+    {
+        return array_filter($this->providers, fn(BillingProvider $provider) => $provider instanceof ProductAwareBillingProvider);
     }
 }

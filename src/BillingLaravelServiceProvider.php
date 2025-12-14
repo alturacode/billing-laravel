@@ -9,6 +9,7 @@ use AlturaCode\Billing\Core\Features\FeatureRepository;
 use AlturaCode\Billing\Core\Products\ProductRepository;
 use AlturaCode\Billing\Core\Provider\ExternalIdMapper;
 use AlturaCode\Billing\Core\Subscriptions\SubscriptionRepository;
+use AlturaCode\Billing\Laravel\Console\Commands\SyncProductsWithProvidersCommand;
 use Illuminate\Support\ServiceProvider;
 
 final class BillingLaravelServiceProvider extends ServiceProvider
@@ -35,6 +36,10 @@ final class BillingLaravelServiceProvider extends ServiceProvider
         ], 'alturacode-billing-migrations');
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([SyncProductsWithProvidersCommand::class]);
+        }
     }
 
     private function registerBillingProviderRegistry(): void
