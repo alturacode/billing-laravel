@@ -15,7 +15,15 @@ final readonly class DefaultBillableDetailsResolver implements BillableDetailsRe
 {
     public function resolve(BillableIdentity $billable): ?BillableDetails
     {
-        $class = Relation::getMorphedModel($billable->type());
+        $class = $billable->type();
+
+        if (!class_exists($class)) {
+            $class = Relation::getMorphedModel($class);
+        }
+
+        if (!class_exists($class)) {
+            throw new LogicException("Could not resolve billable type $class.");
+        }
 
         /** @var Model|null $model */
         $model = $class::find($billable->id());
