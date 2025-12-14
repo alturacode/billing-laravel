@@ -13,7 +13,7 @@ final readonly class BillingProviderRegistry implements \AlturaCode\Billing\Core
     {
     }
 
-    public function subscriptionProviderFor(string $provider): BillingProvider
+    public function get(string $provider): BillingProvider
     {
         return $this->providers[$provider] ?? throw new InvalidArgumentException(
             "Billing provider [$provider] is not registered."

@@ -2,6 +2,8 @@
 
 namespace AlturaCode\Billing\Laravel;
 
+use AlturaCode\Billing\Core\Common\Address;
+use AlturaCode\Billing\Core\Common\BillableDetails;
 use Carbon\Carbon;
 use AlturaCode\Billing\Core\EntitlementChecker;
 use AlturaCode\Billing\Core\EntitlementCheckerFactory;
@@ -40,5 +42,24 @@ trait Billable
             ->withName($name)
             ->withProvider(Config::get('billing.provider'))
             ->withBillable($this->getMorphClass(), $this->getKey());
+    }
+
+    public function resolveBillableDetails(): BillableDetails
+    {
+        return BillableDetails::from(
+            displayName: $this->name ?? null,
+            email: $this->email ?? null,
+            phone: $this->phone ?? null,
+            locales: $this->billing_preferred_locales ?? null,
+            billingAddress: $this->billing_address ? Address::from(
+                line1: $this->billing_address['line_1'] ?? null,
+                line2: $this->billing_address['line_2'] ?? null,
+                city: $this->billing_address['city'] ?? null,
+                stateOrProvince: $this->billing_address['state'] ?? $this->billing_address['province'] ?? null,
+                postalCode: $this->billing_address['postal_code'] ?? null,
+                countryCode: $this->billing_address['country'] ?? null
+            ) : null,
+            metadata: $this->billing_metadata ?? [],
+        );
     }
 }

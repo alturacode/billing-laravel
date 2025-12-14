@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AlturaCode\Billing\Laravel;
 
+use AlturaCode\Billing\Core\BillableDetailsResolver;
 use AlturaCode\Billing\Core\Features\FeatureRepository;
 use AlturaCode\Billing\Core\Products\ProductRepository;
 use AlturaCode\Billing\Core\Provider\ExternalIdMapper;
@@ -18,6 +19,7 @@ final class BillingLaravelServiceProvider extends ServiceProvider
         $this->registerRepositories();
 
         $this->app->bind(ExternalIdMapper::class, DatabaseExternalIdMapperStorage::class);
+        $this->app->bind(BillableDetailsResolver::class, DefaultBillableDetailsResolver::class);
 
         $this->mergeConfigFrom(__DIR__ . '/../config/billing.php', 'billing');
     }
