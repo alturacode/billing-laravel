@@ -1,7 +1,18 @@
 # Altura Code Billing for Laravel
 
-Altura Code Billing for Laravel gives you a clean, Eloquent‑friendly way to work with subscriptions, products, features,
-and billing providers in Laravel apps.
+Altura Code Billing for Laravel gives you a clean way to manage subscriptions in your Laravel applications.
+
+***This package is still under active development.***
+
+## The Motivation
+
+We created this package from the need of needing to support multiple billing providers in one of our projects. Laravel Cashier, while great, only supports either Stripe or Paddle.
+
+This package acts as a nice wrapper for [Altura Code Billing](https://github.com/alturacode/billing-core), giving us a
+nice API to manage subscriptions in our Laravel apps.
+
+We went a little further and made purchasable products as part of the core package; this allows you to easily define
+products, prices and features right from a config file. You can optionally sync with billing providers like Stripe to get started quickly.
 
 ## TL;DR
 
@@ -20,7 +31,7 @@ $result = $user->newSubscription('default')
     ->create();
 
 if ($result->requiresAction()) {
-    return $result->redirect(); // e.g., off-site checkout or SCA
+    return $result->redirect();
 }
 
 $subscription = $result->subscription; // AlturaCode\Billing\Laravel\Subscription
@@ -33,15 +44,13 @@ $subscription = $result->subscription; // AlturaCode\Billing\Laravel\Subscriptio
 
 ## Installation
 
-1) Install the package
+Install the package
 
 ```
 composer require alturacode/billing-laravel
 ```
 
-The service provider is auto-discovered.
-
-2) Make your billable model implement `AlturaCode\Billing\Laravel\Billable` and use the `AlturaCode\Billing\Laravel\HasBilling` trait:
+Make your billable model implement `AlturaCode\Billing\Laravel\Billable` and use the `AlturaCode\Billing\Laravel\HasBilling` trait:
 
 ```php
 use AlturaCode\Billing\Laravel\HasBilling;
@@ -53,7 +62,7 @@ class User extends Model implements Billable
 }
 ```
 
-3) Publish the config file and migrations
+Publish the config file and migrations
 
 ```
 php artisan vendor:publish --provider="AlturaCode\Billing\Laravel\BillingServiceProvider"
@@ -87,6 +96,12 @@ if ($user->subscribed()) {
 $sub = $user->subscription('default'); // Eloquent model or null
 ```
 
+Check if a user can use a feature:
+
+```php
+$user->features()->canUse('projects', 3); // boolean
+````
+
 Query subscriptions:
 
 ```php
@@ -98,15 +113,34 @@ $active = Subscription::query()
     ->get();
 ```
 
-## Billing Providers
+## Stripe
 
-The package ships with `SynchronousBillingProvider` (no external calls). To integrate with a real provider:
+Install the Stripe package:
 
-1) Implement the Core interface `AlturaCode\Billing\Core\Provider\BillingProvider` in your app (e.g.
-   `App\Billing\StripeProvider`).
-2) Add it to `config('billing.providers')` and set `config('billing.provider')` to its key.
-3) In your implementation, return a `BillingProviderResult::redirect(...)` when a client action (e.g. checkout) is
-   required, or `BillingProviderResult::completed(...)` when done.
+```
+composer require alturacode/billing-stripe
+```
+
+Register the billing provider in `config/billing.php`:
+
+```php
+'providers' => [
+    // ...
+    'stripe' => AlturaCode\Billing\Stripe\StripeBillingProvider::class,
+]
+```
+
+Use Stripe for subscriptions:
+
+```php
+$user->newSubscription('default')
+    ->withPlanPriceId('price_basic_monthly')
+    ->withProvider('stripe')
+    ->create([
+       'success_url' => 'https://example.com/success',
+        'cancel_url' => 'https://example.com/cancel',
+   ]);
+```
 
 ## License
 
