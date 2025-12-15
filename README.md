@@ -6,7 +6,7 @@ Altura Code Billing for Laravel gives you a clean way to manage subscriptions in
 
 ## The Motivation
 
-We created this package from the need of needing to support multiple billing providers in one of our projects. Laravel Cashier, while great, only supports either Stripe or Paddle.
+We created this package because we needed to support multiple billing providers (Stripe & PayPal) in one of our projects. Laravel Cashier, while great, only supports either Stripe or Paddle.
 
 This package acts as a nice wrapper for [Altura Code Billing](https://github.com/alturacode/billing-core), giving us a
 nice API to manage subscriptions in our Laravel apps.
