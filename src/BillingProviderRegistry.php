@@ -28,6 +28,6 @@ final readonly class BillingProviderRegistry implements \AlturaCode\Billing\Core
 
     public function productAwareProviders(): array
     {
-        return array_filter($this->providers, fn(BillingProvider $provider) => $provider instanceof ProductAwareBillingProvider);
+        return array_filter(array_values($this->providers), fn(BillingProvider $provider) => $provider instanceof ProductAwareBillingProvider);
     }
 }

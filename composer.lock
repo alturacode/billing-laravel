@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "alturacode/billing-core",
-            "version": "v0.20.0",
+            "version": "v0.20.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alturacode/billing-core.git",
-                "reference": "d783bf297c6a795b6b5945c0de8d54325440893d"
+                "reference": "075597b04a0dce213b315fdd605dbfc4d8da9f52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alturacode/billing-core/zipball/d783bf297c6a795b6b5945c0de8d54325440893d",
-                "reference": "d783bf297c6a795b6b5945c0de8d54325440893d",
+                "url": "https://api.github.com/repos/alturacode/billing-core/zipball/075597b04a0dce213b315fdd605dbfc4d8da9f52",
+                "reference": "075597b04a0dce213b315fdd605dbfc4d8da9f52",
                 "shasum": ""
             },
             "require": {
@@ -58,9 +58,9 @@
             ],
             "support": {
                 "issues": "https://github.com/alturacode/billing-core/issues",
-                "source": "https://github.com/alturacode/billing-core/tree/v0.20.0"
+                "source": "https://github.com/alturacode/billing-core/tree/v0.20.1"
             },
-            "time": "2025-12-14T23:26:19+00:00"
+            "time": "2025-12-15T00:03:29+00:00"
         },
         {
             "name": "brick/math",

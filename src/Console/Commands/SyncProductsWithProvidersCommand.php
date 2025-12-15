@@ -3,8 +3,8 @@
 namespace AlturaCode\Billing\Laravel\Console\Commands;
 
 use AlturaCode\Billing\Core\Products\ProductRepository;
+use AlturaCode\Billing\Core\Provider\BillingProviderRegistry;
 use AlturaCode\Billing\Core\Provider\ProductAwareBillingProvider;
-use AlturaCode\Billing\Laravel\BillingProviderRegistry;
 use Illuminate\Console\Command;
 
 class SyncProductsWithProvidersCommand extends Command
