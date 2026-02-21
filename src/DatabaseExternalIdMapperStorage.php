@@ -23,11 +23,21 @@ final readonly class DatabaseExternalIdMapperStorage implements ExternalIdMapper
     public function storeMultiple(array $data): void
     {
         foreach ($data as $item) {
-            if (!isset($item['type'], $item['provider'], $item['internal_id'], $item['external_id'])) {
-                throw new InvalidArgumentException('Item in data array must contain type, provider, internal_id, and external_id fields');
+            if (!isset($item['type'], $item['provider'], $item['internalId'], $item['externalId'])) {
+                throw new InvalidArgumentException('Item in data array must contain type, provider, internalId, and externalId fields');
             }
         }
-        DB::table('external_id_maps')->insert($data);
+
+        $transformedData = array_map(function ($item) {
+            return [
+                'type' => $item['type'],
+                'provider' => $item['provider'],
+                'internal_id' => $item['internalId'],
+                'external_id' => $item['externalId'],
+            ];
+        }, $data);
+
+        DB::table('external_id_maps')->insert($transformedData);
     }
 
     public function getExternalId(string $type, string $provider, string|int $internalId): string|int|null
