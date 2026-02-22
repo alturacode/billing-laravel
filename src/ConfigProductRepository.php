@@ -86,7 +86,7 @@ final readonly class ConfigProductRepository implements ProductRepository
                 'value' => [
                     'value' => $feature['value'],
                     'kind' => $map[$feature['key']]['kind'],
-                    'usage_policy' => $map[$feature['key']]['kind'] === 'limit' ? [
+                    'usagePolicy' => $map[$feature['key']]['kind'] === 'limit' ? [
                         'period' => $map[$feature['key']]['usage_policy'] ?? 'month',
                     ] : null,
                 ],

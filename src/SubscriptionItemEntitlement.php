@@ -38,6 +38,7 @@ final class SubscriptionItemEntitlement extends Model
             'feature_value_boolean' => $featureValueIsBoolean ? $featureValue : null,
             'effective_window_starts_at' => $entitlement->effectiveWindow()?->startsAt(),
             'effective_window_ends_at' => $entitlement->effectiveWindow()?->endsAt(),
+            'usage_policy_period' => $entitlement->value()->usagePolicy()?->period()?->value,
         ]);
     }
 
@@ -54,6 +55,9 @@ final class SubscriptionItemEntitlement extends Model
             'value' => [
                 'kind' => $this->feature_value_kind,
                 'value' => $this->feature_value_boolean ?? $this->feature_value_integer ?? $this->feature_value_string,
+                'usagePolicy' => $this->usage_policy_period ? [
+                    'period' => $this->usage_policy_period,
+                ] : null,
             ],
             'effectiveWindow' => $this->effective_window_starts_at || $this->effective_window_ends_at ? [
                 'start' => $this->effective_window_starts_at->format('Y-m-d H:i:s'),

@@ -41,14 +41,22 @@ it('can create a free subscription', function () {
     $this->assertDatabaseHas('subscription_item_entitlements', [
         'feature_key' => 'storage_space',
         'feature_value_integer' => 5,
+        'usage_policy_period' => 'perpetual',
     ]);
     $this->assertDatabaseHas('subscription_item_entitlements', [
         'feature_key' => 'users',
         'feature_value_integer' => 2,
+        'usage_policy_period' => 'perpetual',
     ]);
     $this->assertDatabaseHas('subscription_item_entitlements', [
         'feature_key' => 'projects',
         'feature_value_integer' => 3,
+        'usage_policy_period' => 'perpetual',
+    ]);
+    $this->assertDatabaseHas('subscription_item_entitlements', [
+        'feature_key' => 'tickets',
+        'feature_value_integer' => 100,
+        'usage_policy_period' => 'month',
     ]);
 });
 
