@@ -40,6 +40,14 @@ return [
             'unit' => 'project'
         ],
         [
+            'key' => 'tickets',
+            'name' => 'Monthly Tickets Volume',
+            'description' => 'Number of tickets created per month',
+            'kind' => 'limit',
+            'usage_policy' => 'month',
+            'unit' => 'ticket'
+        ],
+        [
             'key' => 'priority_support',
             'name' => 'Priority Support',
             'description' => 'Get priority email and chat support',
@@ -69,7 +77,8 @@ return [
             'features' => [
                 ['key' => 'storage_space', 'value' => 5],
                 ['key' => 'users', 'value' => 2],
-                ['key' => 'projects', 'value' => 3]
+                ['key' => 'projects', 'value' => 3],
+                ['key' => 'tickets', 'value' => 100],
             ],
         ],
         [
@@ -93,7 +102,8 @@ return [
                 ['key' => 'storage_space', 'value' => 50],
                 ['key' => 'users', 'value' => 10],
                 ['key' => 'projects', 'value' => 20],
-                ['key' => 'priority_support', 'value' => true]
+                ['key' => 'priority_support', 'value' => true],
+                ['key' => 'tickets', 'value' => 500],
             ],
         ],
         [
@@ -118,7 +128,8 @@ return [
                 ['key' => 'users', 'value' => 50],
                 ['key' => 'projects', 'value' => 'unlimited'],
                 ['key' => 'priority_support', 'value' => true],
-                ['key' => 'custom_domain', 'value' => true]
+                ['key' => 'custom_domain', 'value' => true],
+                ['key' => 'tickets', 'value' => 'unlimited'],
             ],
         ]
     ],

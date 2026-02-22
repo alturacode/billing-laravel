@@ -1,5 +1,6 @@
 <?php
 
+use AlturaCode\Billing\Core\Common\UsagePeriod;
 use AlturaCode\Billing\Core\Products\Product;
 use AlturaCode\Billing\Core\Products\ProductId;
 use AlturaCode\Billing\Core\Products\ProductPriceId;
@@ -73,10 +74,15 @@ it('properly denormalizes features for products', function () {
     expect($features)->not->toBeEmpty();
 
     $storageFeature = array_find($features, fn($f) => $f->key()->value() === 'storage_space');
+    $ticketFeature = array_find($features, fn($f) => $f->key()->value() === 'tickets');
 
     expect($storageFeature)->not->toBeNull()
         ->and($storageFeature->name())->toBe('Storage Space') // Loaded from billing.features
-        ->and($storageFeature->value()->value())->toBe(5); // Loaded from the plan itself
+        ->and($storageFeature->value()->usagePolicy()->period())->toBe(UsagePeriod::Perpetual) // Loaded from billing.features
+        ->and($storageFeature->value()->value())->toBe(5) // Loaded from the plan itself
+        ->and($ticketFeature->name())->toBe('Monthly Tickets Volume') // Loaded from billing.features
+        ->and($ticketFeature->value()->usagePolicy()->period())->toBe(UsagePeriod::Month) // Loaded from billing.features
+        ->and($ticketFeature->value()->value())->toBe(100); // Loaded from the plan itself
 });
 
 it('returns empty array if no plans or addons in config', function () {
