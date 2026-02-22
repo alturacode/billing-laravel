@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AlturaCode\Billing\Laravel;
 
-use AlturaCode\Billing\Core\Features\Feature;
 use AlturaCode\Billing\Core\Products\Product;
 use AlturaCode\Billing\Core\Products\ProductId;
 use AlturaCode\Billing\Core\Products\ProductKind;
@@ -69,13 +68,15 @@ final readonly class ConfigProductRepository implements ProductRepository
 
     private function denormalize(array $products): array
     {
-        // Products coming from the config file don't include the feature's kind, we need to add it.
+        // Products coming from the config file don't include the feature's kind or policy, we need to add it.
         /** @var array<string, array> $map */
         $map = [];
         $features = $this->config->get('billing.features');
+
         foreach ($features as $feature) {
             $map[$feature['key']] = $feature;
         }
+
         return array_map(fn(array $product) => [
             ...$product,
             'features' => array_map(fn(array $feature) => [
@@ -85,7 +86,10 @@ final readonly class ConfigProductRepository implements ProductRepository
                 'value' => [
                     'value' => $feature['value'],
                     'kind' => $map[$feature['key']]['kind'],
-                ]
+                    'usage_policy' => $map[$feature['key']]['kind'] === 'limit' ? [
+                        'period' => $map[$feature['key']]['usage_policy'] ?? 'month',
+                    ] : null,
+                ],
             ], $product['features'])
         ], $products);
     }

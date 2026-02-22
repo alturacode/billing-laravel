@@ -20,6 +20,7 @@ return [
             'name' => 'Storage Space',
             'description' => 'Available storage space in GB',
             'kind' => 'limit',
+            'usage_policy' => 'perpetual',
             'unit' => 'GB'
         ],
         [
@@ -27,6 +28,7 @@ return [
             'name' => 'Team Members',
             'description' => 'Number of team member seats',
             'kind' => 'limit',
+            'usage_policy' => 'perpetual',
             'unit' => 'user'
         ],
         [
@@ -34,6 +36,7 @@ return [
             'name' => 'Projects',
             'description' => 'Number of active projects allowed',
             'kind' => 'limit',
+            'usage_policy' => 'perpetual',
             'unit' => 'project'
         ],
         [
