@@ -4,9 +4,9 @@ namespace AlturaCode\Billing\Laravel;
 
 use AlturaCode\Billing\Core\Common\Address;
 use AlturaCode\Billing\Core\Common\BillableDetails;
+use AlturaCode\Billing\Core\UsageAwareEntitlementChecker;
+use AlturaCode\Billing\Core\UsageAwareEntitlementCheckerFactory;
 use Carbon\Carbon;
-use AlturaCode\Billing\Core\EntitlementChecker;
-use AlturaCode\Billing\Core\EntitlementCheckerFactory;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 
@@ -29,9 +29,9 @@ trait HasBilling
         return $subscription && $subscription->isActive();
     }
 
-    public function features(string $name = 'default', ?Carbon $date = null): EntitlementChecker
+    public function features(string $name = 'default', ?Carbon $date = null): UsageAwareEntitlementChecker
     {
-        return App::make(EntitlementCheckerFactory::class)->create(
+        return App::make(UsageAwareEntitlementCheckerFactory::class)->create(
             $this->subscription($name)->toCore(), ($date ?? now())->toDateTimeImmutable()
         );
     }

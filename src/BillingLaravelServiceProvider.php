@@ -6,6 +6,7 @@ namespace AlturaCode\Billing\Laravel;
 
 use AlturaCode\Billing\Core\BillableDetailsResolver;
 use AlturaCode\Billing\Core\Features\FeatureRepository;
+use AlturaCode\Billing\Core\Features\UsageRepository;
 use AlturaCode\Billing\Core\Products\ProductRepository;
 use AlturaCode\Billing\Core\Provider\ExternalIdMapper;
 use AlturaCode\Billing\Core\Subscriptions\SubscriptionRepository;
@@ -61,5 +62,8 @@ final class BillingLaravelServiceProvider extends ServiceProvider
 
         $subscriptionRepository = $this->app['config']->get('billing.repositories.subscriptions', EloquentSubscriptionRepository::class);
         $this->app->bind(SubscriptionRepository::class, $subscriptionRepository);
+
+        $usageRepository = $this->app['config']->get('billing.repositories.usage', EloquentUsageRepository::class);
+        $this->app->bind(UsageRepository::class, $usageRepository);
     }
 }
