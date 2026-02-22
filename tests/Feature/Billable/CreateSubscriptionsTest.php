@@ -37,7 +37,7 @@ it('can create a free subscription', function () {
         'interval_count' => 1,
     ]);
 
-    $this->assertDatabaseCount('subscription_item_entitlements', 3);
+    $this->assertDatabaseCount('subscription_item_entitlements', 4);
     $this->assertDatabaseHas('subscription_item_entitlements', [
         'feature_key' => 'storage_space',
         'feature_value_integer' => 5,
