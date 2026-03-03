@@ -1,6 +1,5 @@
 <?php
 
-use AlturaCode\Billing\Laravel\Subscription;
 use Workbench\App\Models\User;
 
 it('can swap subscription item prices', function () {
@@ -39,27 +38,27 @@ it('can swap subscription item prices', function () {
 it('can swap subscription prices via subscription model', function () {
     $user = User::factory()->create();
 
-    // Create a Pro (Monthly) subscription
+    // Create a free subscription
     $result = $user->newSubscription()
-        ->withPlanPriceId('01KBZ5R52MW2W6DY91FC8BEYK1')
+        ->withPlanPriceId('01KC0PVCBTXR73W2XDZZ2R7F05')
         ->create();
 
     $subscription = $result->subscription;
 
-    // Swap to Pro (Yearly)
-    $newPriceId = '01KBZ5R52MW2W6DY91FC8BEYK2';
+    // Swap to Pro plan (Monthly)
+    $newPriceId = '01KBZ5R52MW2W6DY91FC8BEYK1';
     $subscription = $subscription->swap($newPriceId)->subscription;
 
     expect($subscription->items)->toHaveCount(1)
         ->and($subscription->items->first()->price_id)->toBe($newPriceId)
-        ->and($subscription->items->first()->price_amount)->toBe(15000)
-        ->and($subscription->items->first()->interval_type)->toBe('year');
+        ->and($subscription->items->first()->price_amount)->toBe(1500)
+        ->and($subscription->items->first()->interval_type)->toBe('month');
 
     $this->assertDatabaseHas('subscription_items', [
         'subscription_id' => $subscription->id,
         'price_id' => $newPriceId,
-        'price_amount' => 15000,
-        'interval_type' => 'year',
+        'price_amount' => 1500,
+        'interval_type' => 'month',
     ]);
 });
 
