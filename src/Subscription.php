@@ -103,6 +103,62 @@ final class Subscription extends Model
         return $this->items->first(fn(SubscriptionItem $item) => $item->id === $this->primary_item_id)->swap($newPriceId, $options);
     }
 
+    public function cancel(array $options = []): BillingProviderResult
+    {
+        /** @var \AlturaCode\Billing\Core\BillingManager $manager */
+        $manager = \Illuminate\Support\Facades\App::make(\AlturaCode\Billing\Core\BillingManager::class);
+
+        $result = $manager->cancelSubscription($this->id, false, $options);
+
+        return new BillingProviderResult(
+            $result,
+            self::saveFromCore($result->subscription)
+        );
+    }
+
+    public function cancelAtPeriodEnd(array $options = []): BillingProviderResult
+    {
+        /** @var \AlturaCode\Billing\Core\BillingManager $manager */
+        $manager = \Illuminate\Support\Facades\App::make(\AlturaCode\Billing\Core\BillingManager::class);
+
+        $result = $manager->cancelSubscription($this->id, true, $options);
+
+        return new BillingProviderResult(
+            $result,
+            self::saveFromCore($result->subscription)
+        );
+    }
+
+    public function pause(array $options = []): BillingProviderResult
+    {
+        /** @var \AlturaCode\Billing\Core\BillingManager $manager */
+        $manager = \Illuminate\Support\Facades\App::make(\AlturaCode\Billing\Core\BillingManager::class);
+
+        $result = $manager->pauseSubscription($this->id, $options);
+
+        return new BillingProviderResult(
+            $result,
+            self::saveFromCore($result->subscription)
+        );
+    }
+
+    public function resume(array $options = []): BillingProviderResult
+    {
+        /** @var \AlturaCode\Billing\Core\BillingManager $manager */
+        $manager = \Illuminate\Support\Facades\App::make(\AlturaCode\Billing\Core\BillingManager::class);
+
+        if ($this->isPaused()) {
+            $result = $manager->resumeSubscription($this->id, $options);
+        } else {
+            $result = $manager->doNotCancelSubscription($this->id, $options);
+        }
+
+        return new BillingProviderResult(
+            $result,
+            self::saveFromCore($result->subscription)
+        );
+    }
+
     public function billable(): BelongsTo
     {
         return $this->morphTo();
@@ -111,6 +167,11 @@ final class Subscription extends Model
     public function isActive(): bool
     {
         return $this->status === SubscriptionStatus::Active;
+    }
+
+    public function isPendingCancellation(): bool
+    {
+        return $this->cancel_at_period_end;
     }
 
     public function isPaused(): bool
