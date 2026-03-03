@@ -28,6 +28,19 @@ final class SubscriptionItem extends Model
         return $this->hasMany(SubscriptionItemEntitlement::class, 'subscription_item_id');
     }
 
+    public function swap(string $newPriceId, array $options = []): BillingProviderResult
+    {
+        /** @var \AlturaCode\Billing\Core\BillingManager $manager */
+        $manager = \Illuminate\Support\Facades\App::make(\AlturaCode\Billing\Core\BillingManager::class);
+
+        $result = $manager->swapSubscriptionItemPrice($this->id, $newPriceId, $options);
+
+        return new BillingProviderResult(
+            $result,
+            Subscription::find($result->subscription->id()->value())
+        );
+    }
+
     public static function fromCore(\AlturaCode\Billing\Core\Subscriptions\SubscriptionItem $subscriptionItem): self
     {
         return new self([

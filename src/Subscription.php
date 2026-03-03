@@ -47,26 +47,41 @@ final class Subscription extends Model
      */
     public static function saveFromCore(\AlturaCode\Billing\Core\Subscriptions\Subscription $coreSubscription): Subscription
     {
-        // @todo - handle removing items & entitlements
         return DB::transaction(function () use ($coreSubscription) {
             $subscription = self::query()->updateOrCreate([
                 'id' => $coreSubscription->id()->value(),
             ], self::fromCore($coreSubscription)->toArray());
-            
+
             $items = [];
             $entitlements = [];
+
+            $coreItemIds = [];
+            $coreEntitlementIds = [];
+
             foreach ($coreSubscription->items() as $item) {
+                $coreItemIds[] = $item->id()->value();
                 $items[] = [
                     ...SubscriptionItem::fromCore($item)->toArray(),
                     'subscription_id' => $coreSubscription->id()->value(),
                 ];
                 foreach ($item->entitlements() as $entitlement) {
+                    $coreEntitlementIds[] = $entitlement->id()->value();
                     $entitlements[] = [
                         ...SubscriptionItemEntitlement::fromCore($entitlement)->toArray(),
                         'subscription_item_id' => $item->id()->value(),
                     ];
                 }
             }
+
+            // Remove orphaned items
+            SubscriptionItem::where('subscription_id', $coreSubscription->id()->value())
+                ->whereNotIn('id', $coreItemIds)
+                ->delete();
+
+            // Remove orphaned entitlements
+            SubscriptionItemEntitlement::whereIn('subscription_item_id', $coreItemIds)
+                ->whereNotIn('id', $coreEntitlementIds)
+                ->delete();
 
             if (count($items) > 0) {
                 SubscriptionItem::upsert($items, ['id']);
@@ -81,6 +96,11 @@ final class Subscription extends Model
     public function items(): HasMany
     {
         return $this->hasMany(SubscriptionItem::class);
+    }
+
+    public function swap(string $newPriceId, array $options = []): BillingProviderResult
+    {
+        return $this->items->first(fn(SubscriptionItem $item) => $item->id === $this->primary_item_id)->swap($newPriceId, $options);
     }
 
     public function billable(): BelongsTo
