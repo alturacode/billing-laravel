@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace AlturaCode\Billing\Laravel;
 
+use AlturaCode\Billing\Core\Common\BillableIdentity;
 use AlturaCode\Billing\Core\Common\FeatureKey;
 use AlturaCode\Billing\Core\Common\UsageWindow;
 use AlturaCode\Billing\Core\Features\UsageRepository;
-use AlturaCode\Billing\Core\Subscriptions\SubscriptionId;
 use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentUsageRepository implements UsageRepository
@@ -15,28 +15,30 @@ final readonly class EloquentUsageRepository implements UsageRepository
     /**
      * @inheritDoc
      */
-    public function getUsedAmount(SubscriptionId $subscriptionId, FeatureKey $featureKey, UsageWindow $window): int
+    public function getUsedAmount(BillableIdentity $billable, FeatureKey $featureKey, UsageWindow $window): int
     {
         return FeatureUsage::query()
-            ->where('subscription_id', $subscriptionId->value())
+            ->where('billable_type', $billable->type())
+            ->where('billable_id', (string) $billable->id())
             ->where('feature_key', $featureKey->value())
             ->where('window_start', $window->startsAt())
             ->where('window_end', $window->endsAt())
             ->value('used') ?? 0;
     }
 
-    /**
+     /**
      * @inheritDoc
      */
-    public function tryConsume(SubscriptionId $subscriptionId, FeatureKey $featureKey, UsageWindow $window, int $amount, int $limit): bool
+    public function tryConsume(BillableIdentity $billable, FeatureKey $featureKey, UsageWindow $window, int $amount, int $limit): bool
     {
         if ($amount <= 0) {
             return false;
         }
 
-        return DB::transaction(function () use ($subscriptionId, $featureKey, $window, $amount, $limit) {
+        return DB::transaction(function () use ($billable, $featureKey, $window, $amount, $limit) {
             $record = FeatureUsage::query()
-                ->where('subscription_id', $subscriptionId->value())
+                ->where('billable_type', $billable->type())
+                ->where('billable_id', (string) $billable->id())
                 ->where('feature_key', $featureKey->value())
                 ->where('window_start', $window->startsAt())
                 ->where('window_end', $window->endsAt())
@@ -53,7 +55,8 @@ final readonly class EloquentUsageRepository implements UsageRepository
                 $record->increment('used', $amount);
             } else {
                 FeatureUsage::create([
-                    'subscription_id' => $subscriptionId->value(),
+                    'billable_type' => $billable->type(),
+                    'billable_id' => (string) $billable->id(),
                     'feature_key' => $featureKey->value(),
                     'window_start' => $window->startsAt(),
                     'window_end' => $window->endsAt(),
@@ -65,11 +68,12 @@ final readonly class EloquentUsageRepository implements UsageRepository
         });
     }
 
-    public function setUsedAmount(SubscriptionId $subscriptionId, FeatureKey $featureKey, UsageWindow $window, int $amount): void
+    public function setUsedAmount(BillableIdentity $billable, FeatureKey $featureKey, UsageWindow $window, int $amount): void
     {
         FeatureUsage::query()->updateOrCreate(
             [
-                'subscription_id' => $subscriptionId->value(),
+                'billable_type' => $billable->type(),
+                'billable_id' => (string) $billable->id(),
                 'feature_key' => $featureKey->value(),
                 'window_start' => $window->startsAt(),
                 'window_end' => $window->endsAt(),
@@ -78,11 +82,12 @@ final readonly class EloquentUsageRepository implements UsageRepository
         );
     }
 
-    public function incrementUsage(SubscriptionId $subscriptionId, FeatureKey $featureKey, UsageWindow $window, int $amount): void
+    public function incrementUsage(BillableIdentity $billable, FeatureKey $featureKey, UsageWindow $window, int $amount): void
     {
-        DB::transaction(function () use ($subscriptionId, $featureKey, $window, $amount) {
+        DB::transaction(function () use ($billable, $featureKey, $window, $amount) {
             $record = FeatureUsage::query()
-                ->where('subscription_id', $subscriptionId->value())
+                ->where('billable_type', $billable->type())
+                ->where('billable_id', (string) $billable->id())
                 ->where('feature_key', $featureKey->value())
                 ->where('window_start', $window->startsAt())
                 ->where('window_end', $window->endsAt())
@@ -93,7 +98,8 @@ final readonly class EloquentUsageRepository implements UsageRepository
                 $record->increment('used', $amount);
             } else {
                 FeatureUsage::create([
-                    'subscription_id' => $subscriptionId->value(),
+                    'billable_type' => $billable->type(),
+                    'billable_id' => (string) $billable->id(),
                     'feature_key' => $featureKey->value(),
                     'window_start' => $window->startsAt(),
                     'window_end' => $window->endsAt(),
@@ -103,11 +109,12 @@ final readonly class EloquentUsageRepository implements UsageRepository
         });
     }
 
-    public function decrementUsage(SubscriptionId $subscriptionId, FeatureKey $featureKey, UsageWindow $window, int $amount): void
+    public function decrementUsage(BillableIdentity $billable, FeatureKey $featureKey, UsageWindow $window, int $amount): void
     {
-        DB::transaction(function () use ($subscriptionId, $featureKey, $window, $amount) {
+        DB::transaction(function () use ($billable, $featureKey, $window, $amount) {
             $record = FeatureUsage::query()
-                ->where('subscription_id', $subscriptionId->value())
+                ->where('billable_type', $billable->type())
+                ->where('billable_id', (string) $billable->id())
                 ->where('feature_key', $featureKey->value())
                 ->where('window_start', $window->startsAt())
                 ->where('window_end', $window->endsAt())
@@ -118,7 +125,8 @@ final readonly class EloquentUsageRepository implements UsageRepository
                 $record->update(['used' => max(0, $record->used - $amount)]);
             } else {
                 FeatureUsage::create([
-                    'subscription_id' => $subscriptionId->value(),
+                    'billable_type' => $billable->type(),
+                    'billable_id' => (string) $billable->id(),
                     'feature_key' => $featureKey->value(),
                     'window_start' => $window->startsAt(),
                     'window_end' => $window->endsAt(),
