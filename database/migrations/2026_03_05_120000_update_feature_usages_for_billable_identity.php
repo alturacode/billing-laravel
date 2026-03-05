@@ -35,6 +35,42 @@ return new class extends Migration {
                 }
             });
 
+        DB::table('feature_usages')
+            ->select('billable_type', 'billable_id', 'feature_key')
+            ->whereNotNull('billable_type')
+            ->whereNotNull('billable_id')
+            ->distinct()
+            ->orderBy('billable_type')
+            ->orderBy('billable_id')
+            ->orderBy('feature_key')
+            ->chunk(100, function ($groups) {
+                foreach ($groups as $group) {
+                    $records = DB::table('feature_usages')
+                        ->where('billable_type', $group->billable_type)
+                        ->where('billable_id', $group->billable_id)
+                        ->where('feature_key', $group->feature_key)
+                        ->orderByDesc('window_end')
+                        ->orderByDesc('window_start')
+                        ->orderByDesc('created_at')
+                        ->get();
+
+                    if ($records->count() <= 1) {
+                        continue;
+                    }
+
+                    $latest = $records->first();
+                    $totalUsed = (int) $records->sum('used');
+
+                    DB::table('feature_usages')
+                        ->where('id', $latest->id)
+                        ->update(['used' => $totalUsed]);
+
+                    DB::table('feature_usages')
+                        ->whereIn('id', $records->pluck('id')->slice(1)->all())
+                        ->delete();
+                }
+            });
+
         Schema::table('feature_usages', function (Blueprint $table) {
             $table->dropUnique('unique_feature_usage');
             $table->dropForeign(['subscription_id']);
@@ -69,6 +105,39 @@ return new class extends Migration {
                         ->update([
                             'subscription_id' => $subscription->id,
                         ]);
+                }
+            });
+
+        DB::table('feature_usages')
+            ->select('subscription_id', 'feature_key')
+            ->whereNotNull('subscription_id')
+            ->distinct()
+            ->orderBy('subscription_id')
+            ->orderBy('feature_key')
+            ->chunk(100, function ($groups) {
+                foreach ($groups as $group) {
+                    $records = DB::table('feature_usages')
+                        ->where('subscription_id', $group->subscription_id)
+                        ->where('feature_key', $group->feature_key)
+                        ->orderByDesc('window_end')
+                        ->orderByDesc('window_start')
+                        ->orderByDesc('created_at')
+                        ->get();
+
+                    if ($records->count() <= 1) {
+                        continue;
+                    }
+
+                    $latest = $records->first();
+                    $totalUsed = (int) $records->sum('used');
+
+                    DB::table('feature_usages')
+                        ->where('id', $latest->id)
+                        ->update(['used' => $totalUsed]);
+
+                    DB::table('feature_usages')
+                        ->whereIn('id', $records->pluck('id')->slice(1)->all())
+                        ->delete();
                 }
             });
 
