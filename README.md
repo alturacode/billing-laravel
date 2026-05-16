@@ -42,6 +42,10 @@ $subscription = $result->subscription; // AlturaCode\Billing\Laravel\Subscriptio
 - PHP 8.4+
 - Laravel 12.x
 
+## Upgrading
+
+See [UPGRADE.md](UPGRADE.md) for breaking usage API changes and migration steps.
+
 ## Installation
 
 Install the package
@@ -100,7 +104,37 @@ Check if a user can use a feature:
 
 ```php
 $user->features()->canUse('projects', 3); // boolean
-````
+```
+
+Inspect recorded usage for a feature:
+
+```php
+$user->features()->getUsedAmount('projects'); // integer
+```
+
+Record usage:
+
+```php
+$user->newUsageEvent('projects')
+    ->withMetadata(['source' => 'project_created'])
+    ->record();
+```
+
+Use a stable event id for retry-safe recording:
+
+```php
+$user->newUsageEvent('projects')
+    ->withId($requestId)
+    ->record();
+```
+
+Configure the usage ledger storage in `config/billing.php`:
+
+```php
+'repositories' => [
+    'usage_ledger' => AlturaCode\Billing\Laravel\EloquentUsageLedger::class,
+],
+```
 
 Query subscriptions:
 

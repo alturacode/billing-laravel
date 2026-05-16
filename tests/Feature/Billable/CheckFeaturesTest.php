@@ -1,6 +1,16 @@
 <?php
 
+use AlturaCode\Billing\Core\Features\UsageEventId;
+use AlturaCode\Billing\Core\UsageAwareEntitlementCheckerFactory;
+use AlturaCode\Billing\Laravel\FeatureUsageEvent;
 use Workbench\App\Models\User;
+
+function recordUsageFor(User $user, string $featureKey, int $amount = 1): void
+{
+    $user->newUsageEvent($featureKey)
+        ->withAmount($amount)
+        ->record();
+}
 
 it('can check features', function () {
     $user = User::factory()->create();
@@ -13,54 +23,73 @@ it('can check features', function () {
         ->and($user->features()->canUse('users'))->toBeTrue();
 });
 
-it('can check features with limits', function () {
+it('can check features with recorded usage limits', function () {
     $user = User::factory()->create();
 
     $user->newSubscription()
         ->withPlanPriceId('01KC0PVCBTXR73W2XDZZ2R7F05') // Free plan (2 users)
         ->create();
 
-    expect($user->features()->canUse('users'))->toBeTrue()
-        ->and($user->features()->tryConsume('users'))->toBeTrue()
-        ->and($user->features()->getUsedAmount('users'))->toBe(1)
-        ->and($user->features()->tryConsume('users'))->toBeTrue()
-        ->and($user->features()->getUsedAmount('users'))->toBe(2)
+    expect($user->features()->canUse('users'))->toBeTrue();
+
+    recordUsageFor($user, 'users');
+
+    expect($user->features()->getUsedAmount('users'))->toBe(1)
+        ->and($user->features()->canUse('users'))->toBeTrue();
+
+    recordUsageFor($user, 'users');
+
+    expect($user->features()->getUsedAmount('users'))->toBe(2)
         ->and($user->features()->canUse('users'))->toBeFalse();
 });
 
-it('can consume features', function () {
-    $user = User::factory()->create();
-
-    $user->newSubscription()
-        ->withPlanPriceId('01KC0PVCBTXR73W2XDZZ2R7F05') // Free plan (2 users)
-        ->create();
-
-    expect($user->features()->tryConsume('users'))->toBeTrue()
-        ->and($user->features()->getUsedAmount('users'))->toBe(1)
-        ->and($user->features()->tryConsume('users'))->toBeTrue()
-        ->and($user->features()->getUsedAmount('users'))->toBe(2)
-        ->and($user->features()->tryConsume('users'))->toBeFalse()
-        ->and($user->features()->getUsedAmount('users'))->toBe(2);
+it('can resolve the usage-aware entitlement checker factory', function () {
+    expect(app(UsageAwareEntitlementCheckerFactory::class))->toBeInstanceOf(UsageAwareEntitlementCheckerFactory::class);
 });
 
-it('can manage usage directly', function () {
+it('can record usage events without a subscription', function () {
+    $user = User::factory()->create();
+    $event = $user->newUsageEvent('projects');
+
+    expect($event->record())->toBeTrue()
+        ->and($event->record())->toBeFalse();
+
+    $this->assertDatabaseHas('feature_usage_events', [
+        'billable_type' => $user->getMorphClass(),
+        'billable_id' => (string) $user->getKey(),
+        'feature_key' => 'projects',
+        'amount' => 1,
+    ]);
+});
+
+it('can record usage events with custom amount metadata and timestamp', function () {
     $user = User::factory()->create();
 
-    $user->newSubscription()
-        ->withPlanPriceId('01KC0PVCBTXR73W2XDZZ2R7F05') // Free plan
-        ->create();
+    $user->newUsageEvent('tickets')
+        ->withAmount(7)
+        ->withMetadata(['source' => 'import'])
+        ->withRecordedAt(new DateTimeImmutable('2026-02-10 12:00:00', new DateTimeZone('America/Puerto_Rico')))
+        ->record();
 
-    $user->features()->incrementUsage('users', 1);
-    expect($user->features()->getUsedAmount('users'))->toBe(1);
+    $event = FeatureUsageEvent::query()->where('feature_key', 'tickets')->first();
 
-    $user->features()->incrementUsage('users', 1);
-    expect($user->features()->getUsedAmount('users'))->toBe(2);
+    expect($event->amount)->toBe(7)
+        ->and($event->metadata)->toBe(['source' => 'import'])
+        ->and($event->recorded_at->timezone('UTC')->format('Y-m-d H:i:s'))->toBe('2026-02-10 16:00:00');
+});
 
-    $user->features()->decrementUsage('users', 1);
-    expect($user->features()->getUsedAmount('users'))->toBe(1);
+it('can record usage events idempotently with a custom id', function () {
+    $user = User::factory()->create();
+    $eventId = UsageEventId::generate()->value();
 
-    $user->features()->setUsedAmount('users', 5);
-    expect($user->features()->getUsedAmount('users'))->toBe(5);
+    $event = $user->newUsageEvent('projects')
+        ->withId($eventId)
+        ->withAmount(3);
+
+    expect($event->record())->toBeTrue()
+        ->and($event->record())->toBeFalse();
+
+    expect(FeatureUsageEvent::query()->where('id', $eventId)->count())->toBe(1);
 });
 
 it('handles unlimited features', function () {
@@ -71,7 +100,7 @@ it('handles unlimited features', function () {
         ->create();
 
     expect($user->features()->canUse('projects'))->toBeTrue()
-        ->and($user->features()->tryConsume('projects', 1000))->toBeTrue()
+        ->and($user->features()->canUse('projects', 1000))->toBeTrue()
         ->and($user->features()->getUsedAmount('projects'))->toBe(0);
 });
 
@@ -83,5 +112,5 @@ it('returns false for unknown features', function () {
         ->create();
 
     expect($user->features()->canUse('non_existent'))->toBeFalse()
-        ->and($user->features()->tryConsume('non_existent'))->toBeFalse();
+        ->and($user->features()->getUsedAmount('non_existent'))->toBe(0);
 });

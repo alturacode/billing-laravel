@@ -4,6 +4,7 @@ namespace AlturaCode\Billing\Laravel;
 
 use AlturaCode\Billing\Core\Common\Address;
 use AlturaCode\Billing\Core\Common\BillableDetails;
+use AlturaCode\Billing\Core\Features\UsageLedger;
 use AlturaCode\Billing\Core\UsageAwareEntitlementChecker;
 use AlturaCode\Billing\Core\UsageAwareEntitlementCheckerFactory;
 use Carbon\Carbon;
@@ -42,6 +43,16 @@ trait HasBilling
             ->withName($name)
             ->withProvider(Config::get('billing.provider'))
             ->withBillable($this->getMorphClass(), $this->getKey());
+    }
+
+    public function newUsageEvent(string $featureKey): UsageEventBuilder
+    {
+        return new UsageEventBuilder(
+            App::make(UsageLedger::class),
+            $this->getMorphClass(),
+            $this->getKey(),
+            $featureKey,
+        );
     }
 
     public function resolveBillableDetails(): BillableDetails

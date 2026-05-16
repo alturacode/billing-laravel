@@ -12,6 +12,7 @@ interface Billable
     public function subscriptions();
     public function subscribed(string $name = 'default'): bool;
     public function features(string $name = 'default', ?Carbon $date = null): UsageAwareEntitlementChecker;
+    public function newUsageEvent(string $featureKey): UsageEventBuilder;
     public function newSubscription(string $name = 'default'): SubscriptionBuilder;
     public function resolveBillableDetails(): BillableDetails;
 }
