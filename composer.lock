@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f3fbb3b04cea43bfa3cee61389a929c",
+    "content-hash": "fe8f508d2fb3bc0ef98efc0e6fa0ab77",
     "packages": [
         {
             "name": "alturacode/billing-core",
-            "version": "v0.25.0",
+            "version": "v0.26.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alturacode/billing-core.git",
-                "reference": "7e86fbfe799b3202aba7c1d00e30b1d626cf1fa2"
+                "reference": "2132ffb6d5f643a10e1011255406e9d94d71baa9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alturacode/billing-core/zipball/7e86fbfe799b3202aba7c1d00e30b1d626cf1fa2",
-                "reference": "7e86fbfe799b3202aba7c1d00e30b1d626cf1fa2",
+                "url": "https://api.github.com/repos/alturacode/billing-core/zipball/2132ffb6d5f643a10e1011255406e9d94d71baa9",
+                "reference": "2132ffb6d5f643a10e1011255406e9d94d71baa9",
                 "shasum": ""
             },
             "require": {
@@ -58,9 +58,9 @@
             ],
             "support": {
                 "issues": "https://github.com/alturacode/billing-core/issues",
-                "source": "https://github.com/alturacode/billing-core/tree/v0.25.0"
+                "source": "https://github.com/alturacode/billing-core/tree/v0.26.0"
             },
-            "time": "2026-05-16T22:52:16+00:00"
+            "time": "2026-05-17T00:44:33+00:00"
         },
         {
             "name": "brick/math",
